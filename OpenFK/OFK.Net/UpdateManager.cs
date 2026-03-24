@@ -54,8 +54,8 @@ namespace OpenFK.OFK.Net
             Globals.GameForm.SetVar(@"<progress percent=""25.00"" />");
             try
             {
-                LogManager.LogNetwork("[Update] Downloading Update.xml from GitHub", "NetCommand");
-                UpdateStore = XDocument.Parse(HttpManager.HTTPGet(@"https://raw.githubusercontent.com/GittyMac/OpenFK/master/update.xml"));
+                LogManager.LogNetwork("[Update] Downloading Update.xml from Codeberg", "NetCommand");
+                UpdateStore = XDocument.Parse(HttpManager.HTTPGet(@"https://codeberg.org/OpenFunk/OpenFunk/raw/branch/main/update.xml"));
                 LogManager.LogNetwork("[Update] Update.xml was downloaded", "NetCommand");
                 string netVersion = UpdateStore.Root.Attribute("name").Value;
                 string netVersionNum = UpdateStore.Root.Attribute("version").Value;
@@ -72,8 +72,8 @@ namespace OpenFK.OFK.Net
                     Globals.GameForm.SetVar(@"<progress percent=""75.00"" />");
                     try
                     {
-                        LogManager.LogNetwork("[Update] Downloading FSGUI Update.xml from GitHub", "NetCommand");
-                        FSUpdateStore = XDocument.Parse(HttpManager.HTTPGet(@"https://raw.githubusercontent.com/GittyMac/FunkeySelectorGUI/master/update.xml"));
+                        LogManager.LogNetwork("[Update] Downloading FSGUI Update.xml from Codeberg", "NetCommand");
+                        FSUpdateStore = XDocument.Parse(HttpManager.HTTPGet(@"https://codeberg.org/OpenFunk/FunkeySelectorGUI/raw/branch/main/update.xml"));
                         LogManager.LogNetwork("[Update] FSGUI Update.xml was downloaded", "NetCommand");
                         string fsnetVersion = FSUpdateStore.Root.Attribute("name").Value;
                         string fsnetVersionNum = FSUpdateStore.Root.Attribute("version").Value;

@@ -1,4 +1,4 @@
-<img src="https://github.com/GittyMac/OpenFK/blob/gh-pages/logo.png?raw=true" alt="OpenFK Logo" width="256" />
+<img src="https://codeberg.org/OpenFunk/OpenFunk/raw/branch/gh-pages/logo.png" alt="OpenFunK Logo" width="256" />
 
 # OpenFK
 #### An open source replacement for the U.B. Funkeys executable.
