@@ -64,7 +64,7 @@ namespace OpenFK.OFK.Core
 
                 if (File.Exists("FunkeySelectorGUI.exe"))
                 {
-                    Process.Start("FunkeySelectorGUI.exe");
+                    Process.Start("FunkeySelectorGUI.exe", "-MBRun");
                     Thread.Sleep(500);
                     ShowGUI();
                 } else
