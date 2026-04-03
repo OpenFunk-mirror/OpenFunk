@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace OpenFK.OFK.Net
 {
@@ -22,7 +23,7 @@ namespace OpenFK.OFK.Net
         public static void CheckUpdate()
         {
             //OpenFK version
-            string localVerNum = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string localVerNum = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             localVerNum = localVerNum.Substring(0, localVerNum.LastIndexOf("."));
             string localVersion = $"OpenFK v{localVerNum}";
 

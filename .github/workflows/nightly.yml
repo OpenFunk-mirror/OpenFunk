@@ -23,7 +23,7 @@ jobs:
       matrix:
         configuration: [ Debug, Release ]
         platform: [ x64, x86 ]
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
