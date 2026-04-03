@@ -34,6 +34,9 @@ jobs:
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
 
+      - name: Install .NET Framework v4.5
+        run: choco install dotnet4.5
+
       - name: Download Flash.OCX
         shell: cmd
         run: FetchBothOCXs.bat
