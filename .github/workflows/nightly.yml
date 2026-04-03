@@ -26,13 +26,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
       
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
+        uses: NuGet/setup-nuget@v3
 
       - name: Install .NET Framework v4.5.2 SDK
         run: choco install netfx-4.5.2-devpack
@@ -78,7 +78,7 @@ jobs:
         run: get-childitem -path "${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}" -filter *.ocx | foreach-object { remove-item $_.fullname -force }
 
       - name: Upload the build results as an artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: ${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}/*
           name: ${{ env.projectName }}.Nightly.${{ matrix.configuration }}.${{ matrix.platform }}
