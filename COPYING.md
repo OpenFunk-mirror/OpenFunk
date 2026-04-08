@@ -3,6 +3,9 @@
 > [!NOTE]
 > While I have done my best to provide correct information in this document, it should not be taken as legal advice. I am not a lawyer!
 
+> [!TIP]
+> Do you want to use a part of this project's code or do you have some other question? Feel free to reach out!
+
 ```text
 OpenFK Copyright (c) 2020-2026 GittyMac/Lako and OpenFK contributors
 OpenFunk Copyright (c) 2026 NanderTGA and OpenFunk contributors
