@@ -114,7 +114,7 @@ namespace OpenFK.OFK.Net
         }
 
         /// <summary> 
-        /// Retrieves a plain text file from an external server.
+        /// Retrieves a plain text file from the specified URI.
         /// </summary>
         /// <returns>
         /// A string containing the file's contents.
@@ -125,10 +125,15 @@ namespace OpenFK.OFK.Net
 
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            WebRequest request = WebRequest.Create(uri);
+            
+            // Like this we can keep support for other protocols supported by WebRequest
+            if (request is HttpWebRequest httpRequest)
+            {
+                httpRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            }
 
-            using HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using WebResponse response = request.GetResponse();
             using Stream stream = response.GetResponseStream();
             using StreamReader reader = new(stream);
             return reader.ReadToEnd();
