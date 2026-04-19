@@ -13,6 +13,11 @@ namespace OpenFK.OFK.Net
         // Handles anything to do with Galaxy and HTTP.
         // ===================================
 
+        static HttpManager()
+        {
+            DataUri.DataWebRequestFactory.Register();
+        }
+
         /// <summary> 
         /// The hostname for the Galaxy server. 
         /// </summary>
