@@ -2,12 +2,15 @@
 // Based on https://github.com/gregjhogan/WebRequest-data-uri licensed under Apache License 2.0
 // Changes made can be found in the git commits
 
+using System;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+
 namespace DataUri
 {
-    using System;
-    using System.Net;
-
-    public sealed class DataWebRequestFactory : IWebRequestCreate
+    public class DataWebRequestFactory : IWebRequestCreate
     {
         public static void Register()
         {
@@ -19,14 +22,9 @@ namespace DataUri
             return new DataWebRequest(uri);
         }
     }
-}
 
-namespace DataUri
-{
-    using System;
-    using System.Net;
 
-    internal sealed class DataWebRequest : WebRequest
+    class DataWebRequest : WebRequest
     {
         private readonly Uri uri;
 
@@ -37,31 +35,24 @@ namespace DataUri
 
         public override WebResponse GetResponse()
         {
-            return new DataWebResponse(this.uri);
+            return new DataWebResponse(uri);
         }
 
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
         {
-            var result = new DataUriAsyncResult(state);
+            DataUriAsyncResult result = new(state);
             callback.Invoke(result);
             return result;
         }
 
         public override WebResponse EndGetResponse(IAsyncResult asyncResult)
         {
-            return this.GetResponse();
+            return GetResponse();
         }
     }
-}
 
-namespace DataUri
-{
-    using System;
-    using System.Net;
-    using System.Text;
-    using System.Text.RegularExpressions;
 
-    internal sealed class DataWebResponse : WebResponse
+    class DataWebResponse : WebResponse
     {
         private readonly string mediatype = "text/plain";
         private readonly Encoding charset = Encoding.ASCII;
@@ -69,49 +60,45 @@ namespace DataUri
 
         public DataWebResponse(Uri uri)
         {
-            var match = Regex.Match(uri.ToString(), "data:(?<mediatype>[^;,]+/[^;,]+)?(?:;charset=(?<charset>[^;,]+))?(?<base64>;base64)?,(?<data>.*)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            Match match = Regex.Match(
+                uri.ToString(),
+                "data:(?<mediatype>[^;,]+/[^;,]+)?(?:;charset=(?<charset>[^;,]+))?(?<base64>;base64)?,(?<data>.*)",
+                RegexOptions.IgnoreCase | RegexOptions.Singleline
+            );
 
-            if (!string.IsNullOrWhiteSpace(match.Groups["mediatype"].Value))
-            {
-                this.mediatype = match.Groups["mediatype"].Value;
-            }
+            string mediatypeValue = match.Groups["mediatype"].Value;
+            string charsetValue = match.Groups["charset"].Value;
+            string base64Value = match.Groups["base64"].Value;
+            string dataValue = match.Groups["data"].Value;
 
-            if (!string.IsNullOrWhiteSpace(match.Groups["charset"].Value))
-            {
-                this.charset = Encoding.GetEncoding(match.Groups["charset"].Value);
-            }
+            if (!string.IsNullOrWhiteSpace(mediatypeValue))
+                mediatype = mediatypeValue;
 
-            if (!string.IsNullOrWhiteSpace(match.Groups["base64"].Value))
-            {
-                this.data = Convert.FromBase64String(match.Groups["data"].Value);
-            }
+            if (!string.IsNullOrWhiteSpace(charsetValue))
+                charset = Encoding.GetEncoding(charsetValue);
+
+            if (!string.IsNullOrWhiteSpace(base64Value))
+                data = Convert.FromBase64String(dataValue);
             else
-            {
-                this.data = this.charset.GetBytes(match.Groups["data"].Value);
-            }
+                data = charset.GetBytes(dataValue);
         }
 
         public override System.IO.Stream GetResponseStream()
         {
-            return new System.IO.MemoryStream(this.data);
+            return new System.IO.MemoryStream(data);
         }
 
-        public override long ContentLength => this.data.Length;
+        public override long ContentLength => data.Length;
 
-        public override string ContentType => this.mediatype;
+        public override string ContentType => mediatype;
     }
-}
 
-namespace DataUri
-{
-    using System;
-    using System.Threading;
 
-    internal sealed class DataUriAsyncResult : IAsyncResult
+    class DataUriAsyncResult : IAsyncResult
     {
         public DataUriAsyncResult(object asyncState)
         {
-            this.AsyncState = asyncState;
+            AsyncState = asyncState;
         }
 
         public object AsyncState { get; }
