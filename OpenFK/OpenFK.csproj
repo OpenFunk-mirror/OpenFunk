@@ -138,6 +138,7 @@
     <Compile Include="OFK.Common\LogManager.cs" />
     <Compile Include="OFK.Core\BittyManager.cs" />
     <Compile Include="OFK.Core\FileManager.cs" />
+    <Compile Include="OFK.Net\DataUriWebRequest.cs" />
     <Compile Include="OFK.Net\HttpManager.cs" />
     <Compile Include="OFK.Net\RichPresenceManager.cs" />
     <Compile Include="OFK.Net\UpdateManager.cs" />
