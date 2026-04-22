@@ -29,6 +29,14 @@ namespace DataUri
     {
         private readonly Uri uri;
 
+        public override Uri RequestUri => uri;
+
+        public override string Method
+        {
+            get => "GET";
+            set { if (value != "GET") throw new InvalidOperationException("Data URIs only support GET!"); }
+        }
+
         public DataWebRequest(Uri uri)
         {
             this.uri = uri;
@@ -55,12 +63,15 @@ namespace DataUri
 
     class DataWebResponse : WebResponse
     {
+        private readonly Uri uri;
         private readonly string mediatype = "text/plain";
         private readonly Encoding charset = Encoding.ASCII;
         private readonly byte[] data;
 
         public DataWebResponse(Uri uri)
         {
+            this.uri = uri;
+
             Match match = Regex.Match(
                 uri.ToString(),
                 "data:(?<mediatype>[^;,]+/[^;,]+)?(?:;charset=(?<charset>[^;,]+))?(?<base64>;base64)?,(?<data>.*)",
@@ -90,8 +101,8 @@ namespace DataUri
         }
 
         public override long ContentLength => data.Length;
-
         public override string ContentType => mediatype;
+        public override Uri ResponseUri => uri;
     }
 
 
