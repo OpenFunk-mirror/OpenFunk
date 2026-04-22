@@ -3,6 +3,7 @@
 // Changes made can be found in the git commits
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -83,9 +84,9 @@ namespace DataUri
                 data = charset.GetBytes(dataValue);
         }
 
-        public override System.IO.Stream GetResponseStream()
+        public override Stream GetResponseStream()
         {
-            return new System.IO.MemoryStream(data);
+            return new MemoryStream(data);
         }
 
         public override long ContentLength => data.Length;
