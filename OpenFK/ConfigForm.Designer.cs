@@ -83,9 +83,9 @@
             this.RPCToggle.AutoSize = true;
             this.RPCToggle.Location = new System.Drawing.Point(34, 92);
             this.RPCToggle.Name = "RPCToggle";
-            this.RPCToggle.Size = new System.Drawing.Size(96, 17);
+            this.RPCToggle.Size = new System.Drawing.Size(135, 17);
             this.RPCToggle.TabIndex = 2;
-            this.RPCToggle.Text = "Rich Presence";
+            this.RPCToggle.Text = "Discord Rich Presence";
             this.RPCToggle.UseVisualStyleBackColor = true;
             this.RPCToggle.CheckedChanged += new System.EventHandler(this.RPCToggle_CheckedChanged);
             // 
