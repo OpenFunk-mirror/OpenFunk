@@ -141,6 +141,7 @@
     <Compile Include="OFK.Net\DataUriWebRequest.cs" />
     <Compile Include="OFK.Net\HttpManager.cs" />
     <Compile Include="OFK.Net\RichPresenceManager.cs" />
+    <Compile Include="OFK.Net\UpdateInfo.cs" />
     <Compile Include="OFK.Net\UpdateManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
