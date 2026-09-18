@@ -43,6 +43,8 @@ jobs:
       
       - name: Register Flash.OCX
         shell: cmd
+        # The names of these .ocx files are important. They are copied over into the .exe.config file
+        # Upon running the .exe, these filenames are referenced
         run: |
           "%systemroot%\System32\regsvr32.exe" /s "${{ github.workspace }}\Flash64.ocx"
           "%systemroot%\SysWow64\regsvr32.exe" /s "${{ github.workspace }}\Flash32.ocx"
