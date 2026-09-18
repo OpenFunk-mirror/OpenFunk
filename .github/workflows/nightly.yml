@@ -74,7 +74,7 @@ jobs:
           version: "${{ steps.normalizeVersion.outputs.VERSION }}"
 
       - name: Build solution
-        run: msbuild ${{ env.solutionFile }} -t:rebuild -property:Configuration=${{ matrix.configuration }} -property:Platform=${{ matrix.platform }} -verbosity:detailed
+        run: msbuild ${{ env.solutionFile }} -t:"${{ matrix.configuration == 'Release' && 'clean;' || '' }}rebuild" -property:Configuration=${{ matrix.configuration }} -property:Platform=${{ matrix.platform }} -verbosity:detailed
       
       - name: Remove .ocx files
         run: get-childitem -path "${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}" -filter *.ocx | foreach-object { remove-item $_.fullname -force }
