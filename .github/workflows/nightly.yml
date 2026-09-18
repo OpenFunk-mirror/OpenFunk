@@ -54,7 +54,7 @@ jobs:
       
       - name: Get version from update.xml
         id: getVersion
-        uses: mavrosxristoforos/get-xml-info@2.0
+        uses: mavrosxristoforos/get-xml-info@2.1.0
         with:
           xml-file: update.xml
           xpath: //update/@version
