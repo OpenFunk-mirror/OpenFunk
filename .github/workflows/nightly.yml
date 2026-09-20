@@ -120,6 +120,8 @@ jobs:
 
       - name: Set a bunch of variables
         id: info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $filesizes = gh release view --repo ${{ env.githubRepository }} nightly --json assets --jq '[ .assets[] | {name:.name, size:.size} | select(.name | startswith("${{ env.projectName }}")) | {(.name):.size} | to_entries ] | flatten | from_entries' | ConvertFrom-Json
           echo $filesizes
