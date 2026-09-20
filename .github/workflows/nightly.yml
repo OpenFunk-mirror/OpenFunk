@@ -122,6 +122,7 @@ jobs:
         id: info
         run: |
           $filesizes = gh release view --repo ${{ env.githubRepository }} nightly --json assets --jq '[ .assets[] | {name:.name, size:.size} | select(.name | startswith("${{ env.projectName }}")) | {(.name):.size} | to_entries ] | flatten | from_entries' | ConvertFrom-Json
+          echo $filesizes
           "FILESIZE_RELEASE_64=$($filesizes.'${{ env.projectName }}.Release.x64.zip')" >> $env:GITHUB_OUTPUT
           "FILESIZE_RELEASE_86=$($filesizes.'${{ env.projectName }}.Release.x86.zip')" >> $env:GITHUB_OUTPUT
           "FILESIZE_DEBUG_64=$($filesizes.'${{ env.projectName }}.Debug.x64.zip')" >> $env:GITHUB_OUTPUT
