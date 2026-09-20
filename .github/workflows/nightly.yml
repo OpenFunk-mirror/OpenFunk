@@ -2,9 +2,14 @@
 name: Nightly builds
 
 env:
+  # Project details
   projectName: OpenFK
   projectFolder: OpenFK
   solutionFile: OpenFK.sln
+
+  # Repo details
+  githubRepository: OpenFunk-mirror/OpenFunk
+  mainBranchName: fix-ci
 
 on:
   workflow_dispatch:
@@ -85,3 +90,91 @@ jobs:
         with:
           path: ${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}/*
           name: ${{ env.projectName }}.Nightly.${{ matrix.configuration }}.${{ matrix.platform }}
+      
+      - name: Put the build artifacts into an archive file
+        run: Compress-Archive -Path "${{ env.projectFolder }}/bin/${{ matrix.configuration }}/*" -DestinationPath "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
+
+      - name: Upload build result to the prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload nightly "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip" --repo ${{ env.githubRepository }}
+
+
+  finish:
+    permissions:
+      contents: write
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set a bunch of variables
+        id: info
+        run: |
+          $filesizes = gh release view --repo ${{ env.githubRepository }} nightly --json assets --jq '[ .assets[] | {name:.name, size:.size} | select(.name | startswith("${{ env.projectName }}")) | {(.name):.size} | to_entries ] | flatten | from_entries' | ConvertFrom-Json
+          "FILESIZE_RELEASE_64=$($filesizes.'${{ env.projectName }}.Release.x64.zip')" >> $env:GITHUB_OUTPUT
+          "FILESIZE_RELEASE_86=$($filesizes.'${{ env.projectName }}.Release.x86.zip')" >> $env:GITHUB_OUTPUT
+          "FILESIZE_DEBUG_64=$($filesizes.'${{ env.projectName }}.Debug.x64.zip')" >> $env:GITHUB_OUTPUT
+          "FILESIZE_DEBUG_86=$($filesizes.'${{ env.projectName }}.Debug.x86.zip')" >> $env:GITHUB_OUTPUT
+
+          "COMMIT_HASH=$(git log -1 --pretty=format:"%H")" >> $env:GITHUB_OUTPUT
+          "SHORT_COMMIT_HASH=$(git log -1 --pretty=format:"%h")" >> $env:GITHUB_OUTPUT
+          "LAST_COMMIT_TIMESTAMP=$(Get-Date -Date "$(git log -1 --pretty=format:'%aD')" -Format 'ddd, d MMM yyyy HH:mm:ss zzz')" >> $env:GITHUB_OUTPUT
+          "BUILD_TIMESTAMP=$(Get-Date -Format "ddd, d MMM yyyy HH:mm:ss zzz")" >> $env:GITHUB_OUTPUT
+
+      - name: Update update.xml and buld notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $content = @'
+          <?xml version="1.0" encoding="utf-8"?>
+          <update schema_version="2.0" id="openfunk" name="OpenFunk" version="${{ steps.info.outputs.COMMIT_HASH }}" version_name="OpenFunk@${{ steps.info.outputs.SHORT_COMMIT_HASH }}">
+              <variant size="${{ steps.info.outputs.FILESIZE_RELEASE_64 }}" link="https://github.com/${{ env.githubRepository }}/releases/download/nightly/${{ env.projectName }}.Release.x64.zip">
+                  <Property key="BuildConfiguration" value="Release" />
+                  <Property key="Architecture" value="x64" />
+              </variant>
+              <variant size="${{ steps.info.outputs.FILESIZE_RELEASE_86 }}" link="https://github.com/${{ env.githubRepository }}/releases/download/nightly/${{ env.projectName }}.Release.x86.zip">
+                  <Property key="BuildConfiguration" value="Release" />
+                  <Property key="Architecture" value="x86" />
+              </variant>
+              <variant size="${{ steps.info.outputs.FILESIZE_DEBUG_64 }}" link="https://github.com/${{ env.githubRepository }}/releases/download/nightly/${{ env.projectName }}.Debug.x64.zip">
+                  <Property key="BuildConfiguration" value="Debug" />
+                  <Property key="Architecture" value="x64" />
+              </variant>
+              <variant size="${{ steps.info.outputs.FILESIZE_DEBUG_86 }}" link="https://github.com/${{ env.githubRepository }}/releases/download/nightly/${{ env.projectName }}.Debug.x86.zip">
+                  <Property key="BuildConfiguration" value="Debug" />
+                  <Property key="Architecture" value="x86" />
+              </variant>
+          </update>
+          '@
+          Set-Content -Path update.xml -Value $content -Encoding utf8
+          gh release upload nightly update.xml --repo ${{ env.githubRepository }}
+
+          @'
+          Check the attached files for the latest nightly build.
+          Note that the source code download and the tag are NOT kept up to date!
+
+          Current build name: `${{ env.projectName }}@${{ steps.info.outputs.SHORT_COMMIT_HASH }}`
+          Current version: `${{ steps.info.outputs.COMMIT_HASH }}`
+          Last updated: `${{ steps.info.outputs.LAST_COMMIT_TIMESTAMP }}`
+          Built at: `${{ steps.info.outputs.BUILD_TIMESTAMP }}`
+
+          # Which file do I download?
+          TLDR: try the `Release.x64` build. If that doesn't work, try `Release.x86`.
+
+          The builds are distinguished by two properties: BuildConfiguration (Release/Debug) and Architecture (x64/x86).
+          Unless you're planning to use a debugger program, you can disregard the Debug versions. It's a pretty obscure usecase anyway, but I aim to serve all of em :)
+          For the architecture property, you can pick x64 99% of the time. The exceptions are when running a 32-bit operating system (usually only on very old computers) and in some cases when using wine.
+          '@ | gh release edit nightly --notes-file -
+
+# if there isn't a release on the nightly tag yet, create one(?)
+# then edit it to include the new desc
+# gh release view nightly --repo OpenFunk-mirror/FunkeySelectorGUI --json assets
+# useful stuff right there
+
+# epic game plan:
+# - before building, ensure a release exists (nuh uh uh)
+# - build and upload to release
+# - update build info in release notes
+# - update update.xml (requires filesize of all builds)
