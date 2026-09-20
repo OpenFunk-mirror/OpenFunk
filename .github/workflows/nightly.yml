@@ -99,7 +99,9 @@ jobs:
       - name: Upload build result to the prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # assumes there already is an asset with the same name
         run: |
+          gh release delete-asset nightly "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip" --yes
           gh release upload nightly "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip" --repo ${{ env.githubRepository }}
 
 
@@ -156,6 +158,8 @@ jobs:
           </update>
           '@
           Set-Content -Path update.xml -Value $content -Encoding utf8
+          # assumes there already is an update.xml
+          gh release delete-asset nightly update.xml --yes
           gh release upload nightly update.xml --repo ${{ env.githubRepository }}
 
           @'
