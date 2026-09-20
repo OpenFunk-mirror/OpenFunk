@@ -105,6 +105,9 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-slim
+    defaults:
+      run:
+        shell: pwsh
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
