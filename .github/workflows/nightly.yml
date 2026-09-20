@@ -92,7 +92,7 @@ jobs:
           name: ${{ env.projectName }}.Nightly.${{ matrix.configuration }}.${{ matrix.platform }}
       
       - name: Put the build artifacts into an archive file
-        run: Compress-Archive -Path "${{ env.projectFolder }}/bin/${{ matrix.configuration }}/*" -DestinationPath "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
+        run: Compress-Archive -Path "${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}/*" -DestinationPath "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
 
       - name: Upload build result to the prerelease
         env:
