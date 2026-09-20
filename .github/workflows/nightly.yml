@@ -102,6 +102,8 @@ jobs:
 
 
   finish:
+    needs:
+      - build
     permissions:
       contents: write
     runs-on: ubuntu-slim
