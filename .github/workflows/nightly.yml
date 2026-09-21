@@ -181,14 +181,3 @@ jobs:
           Unless you're planning to use a debugger program, you can disregard the Debug versions. It's a pretty obscure usecase anyway, but I aim to serve all of em :)
           For the architecture property, you can pick x64 99% of the time. The exceptions are when running a 32-bit operating system (usually only on very old computers) and in some cases when using wine.
           '@ | gh release edit nightly --notes-file -
-
-# if there isn't a release on the nightly tag yet, create one(?)
-# then edit it to include the new desc
-# gh release view nightly --repo OpenFunk-mirror/FunkeySelectorGUI --json assets
-# useful stuff right there
-
-# epic game plan:
-# - before building, ensure a release exists (nuh uh uh)
-# - build and upload to release
-# - update build info in release notes
-# - update update.xml (requires filesize of all builds)
