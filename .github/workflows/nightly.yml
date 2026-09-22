@@ -46,7 +46,7 @@ jobs:
       - name: Setup forgejo cli
         shell: bash
         run: |
-          wget https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
+          curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
           tar -xf forgejo-cli-x86_64-linux.tar.gz
           chmod +x fj
           cp fj /usr/local/bin
@@ -135,7 +135,7 @@ jobs:
       - name: Setup forgejo cli
         shell: bash
         run: |
-          wget https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
+          curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
           tar -xf forgejo-cli-x86_64-linux.tar.gz
           chmod +x fj
           cp fj /usr/local/bin
