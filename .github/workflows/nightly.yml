@@ -9,7 +9,7 @@ env:
 
   # Repo details
   githubRepository: OpenFunk-mirror/OpenFunk
-  codebergRepository: Openfunk/OpenFunk
+  codebergRepository: OpenFunk/OpenFunk
   codebergReleaseName: Latest nightly build
   mainBranchName: fix-ci
 
