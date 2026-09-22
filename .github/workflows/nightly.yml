@@ -188,8 +188,8 @@ jobs:
           $content = $content.Replace("github.com/${{ env.githubRepository }}", "codeberg.org/${{ env.codebergRepository }}")
           Set-Content -Path update.xml -Value $content -Encoding utf8
           # assumes there already is an update.xml
-          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset delete "${{ env.codebergReleaseName }}" update.xml
-          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset create "${{ env.codebergReleaseName }}" update.xml
+          fj release asset delete "${{ env.codebergReleaseName }}" update.xml -H codeberg.org -r ${{ env.codebergRepository }}
+          fj release asset create "${{ env.codebergReleaseName }}" update.xml -H codeberg.org -r ${{ env.codebergRepository }}
 
           $releaseNotes = @'
           Check the attached files for the latest nightly build.
