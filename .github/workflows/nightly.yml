@@ -101,15 +101,13 @@ jobs:
           path: ${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}/*
           name: ${{ env.projectName }}.Nightly.${{ matrix.configuration }}.${{ matrix.platform }}
       
-      - name: Put the build artifacts into an archive file
-        run: Compress-Archive -Path "${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}/*" -DestinationPath "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
-
-      - name: Upload build result to the prerelease
+      - name: Upload the build results to the nightly builds prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # assumes there already is an asset with the same name
         run: |
           $resultZip = "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
+          Compress-Archive -Path "${{ env.projectFolder }}/bin/${{ matrix.platform }}/${{ matrix.configuration }}/*" -DestinationPath $resultZip
+          # assumes there already is an asset with the same name
           gh release delete-asset nightly $resultZip --yes
           gh release upload nightly $resultZip --repo ${{ env.githubRepository }}
           ./fj release asset delete "${{ env.codebergReleaseName }}" $resultZip -H codeberg.org -r ${{ env.codebergRepository }}
