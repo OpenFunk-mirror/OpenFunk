@@ -138,7 +138,6 @@ jobs:
           curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
           tar -xf forgejo-cli-x86_64-linux.tar.gz
           chmod +x fj
-          cp fj /usr/local/bin
           echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
 
       - name: Set a bunch of variables
