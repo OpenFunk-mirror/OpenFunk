@@ -9,6 +9,8 @@ env:
 
   # Repo details
   githubRepository: OpenFunk-mirror/OpenFunk
+  codebergRepository: Openfunk/OpenFunk
+  codebergReleaseName: Latest nightly build
   mainBranchName: fix-ci
 
 on:
@@ -40,6 +42,15 @@ jobs:
       
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v3
+
+      - name: Setup forgejo cli
+        shell: bash
+        run: |
+          wget https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
+          tar -xf forgejo-cli-x86_64-linux.tar.gz
+          chmod +x fj
+          cp fj /usr/local/bin
+          echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
 
       - name: Install .NET Framework v4.5.2 SDK
         run: choco install netfx-4.5.2-devpack
@@ -101,8 +112,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # assumes there already is an asset with the same name
         run: |
-          gh release delete-asset nightly "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip" --yes
-          gh release upload nightly "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip" --repo ${{ env.githubRepository }}
+          $resultZip = "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
+          gh release delete-asset nightly $resultZip --yes
+          gh release upload nightly $resultZip --repo ${{ env.githubRepository }}
+          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset delete "${{ env.codebergReleaseName }}" $resultZip
+          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset create "${{ env.codebergReleaseName }}" $resultZip
 
 
   finish:
@@ -117,6 +131,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Setup forgejo cli
+        shell: bash
+        run: |
+          wget https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
+          tar -xf forgejo-cli-x86_64-linux.tar.gz
+          chmod +x fj
+          cp fj /usr/local/bin
+          echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
 
       - name: Set a bunch of variables
         id: info
@@ -165,7 +188,13 @@ jobs:
           gh release delete-asset nightly update.xml --yes
           gh release upload nightly update.xml --repo ${{ env.githubRepository }}
 
-          @'
+          $content = $content.Replace("github.com/${{ env.githubRepository }}", "codeberg.org/${{ env.codebergRepository }}")
+          Set-Content -Path update.xml -Value $content -Encoding utf8
+          # assumes there already is an update.xml
+          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset delete "${{ env.codebergReleaseName }}" update.xml
+          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset create "${{ env.codebergReleaseName }}" update.xml
+
+          $releaseNotes = @'
           Check the attached files for the latest nightly build.
           Note that the source code download and the tag are NOT kept up to date!
 
@@ -184,4 +213,6 @@ jobs:
           The builds are distinguished by two properties: BuildConfiguration (Release/Debug) and Architecture (x64/x86).
           Unless you're planning to use a debugger program, you can disregard the Debug versions. It's a pretty obscure usecase anyway, but I aim to serve all of em :)
           For the architecture property, you can pick x64 99% of the time. The exceptions are when running a 32-bit operating system (usually only on very old computers) and in some cases when using wine.
-          '@ | gh release edit nightly --notes-file -
+          '@
+          $releaseNotes | gh release edit nightly --notes-file -
+          fj release edit -H codeberg.org -r ${{ env.codebergRepository }} -t nightly "${{ env.codebergReleaseName }}" -b $releaseNotes
