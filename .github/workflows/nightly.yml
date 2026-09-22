@@ -50,7 +50,7 @@ jobs:
           unzip forgejo-cli-x86_64-windows.zip
           chmod +x fj.exe
           mkdir -p "$USER/.local/bin"
-          mv fj "$USER/.local/bin"
+          mv fj.exe "$USER/.local/bin"
           echo "$USER/.local/bin" >> "$GITHUB_PATH"
           echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
 
