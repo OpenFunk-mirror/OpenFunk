@@ -46,9 +46,9 @@ jobs:
       - name: Setup forgejo cli
         shell: bash
         run: |
-          curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/latest/forgejo-cli-x86_64-linux.tar.gz
-          tar -xf forgejo-cli-x86_64-linux.tar.gz
-          chmod +x fj
+          curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/v0.6.0/forgejo-cli-x86_64-windows.zip
+          unzip forgejo-cli-x86_64-linux.tar.gz
+          chmod +x fj.exe
           mkdir -p "$USER/.local/bin"
           mv fj "$USER/.local/bin"
           echo "$USER/.local/bin" >> "$GITHUB_PATH"
