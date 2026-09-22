@@ -44,14 +44,12 @@ jobs:
         uses: NuGet/setup-nuget@v3
 
       - name: Setup forgejo cli
-        shell: bash
         run: |
           curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/v0.6.0/forgejo-cli-x86_64-windows.zip
           unzip forgejo-cli-x86_64-windows.zip
-          chmod +x fj.exe
-          mkdir -p "$USER/.local/bin"
-          mv fj.exe "$USER/.local/bin"
-          echo "$USER/.local/bin" >> "$GITHUB_PATH"
+          mkdir path-stuff
+          mv fj.exe path-stuff
+          echo "$(pwd)\path-stuff" >> "$GITHUB_PATH"
           echo "${{ secrets.CODEBERG_TOKEN }}" | fj.exe -H codeberg.org auth add-token
 
       - name: Install .NET Framework v4.5.2 SDK
