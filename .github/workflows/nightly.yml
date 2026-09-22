@@ -52,7 +52,7 @@ jobs:
           mkdir -p "$USER/.local/bin"
           mv fj.exe "$USER/.local/bin"
           echo "$USER/.local/bin" >> "$GITHUB_PATH"
-          echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
+          echo "${{ secrets.CODEBERG_TOKEN }}" | fj.exe -H codeberg.org auth add-token
 
       - name: Install .NET Framework v4.5.2 SDK
         run: choco install netfx-4.5.2-devpack
