@@ -53,7 +53,7 @@ jobs:
 
       - name: try to auth the forgejo cli (I have no idea what I'm doing)
         run: |
-          echo "${{ secrets.CODEBERG_TOKEN }}" | fj.exe -H codeberg.org auth add-token
+          echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
 
       - name: Install .NET Framework v4.5.2 SDK
         run: choco install netfx-4.5.2-devpack
