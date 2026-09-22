@@ -50,6 +50,9 @@ jobs:
           mkdir path-stuff
           mv fj.exe path-stuff
           echo "$(pwd)\path-stuff" >> "$GITHUB_PATH"
+
+      - name: try to auth the forgejo cli (I have no idea what I'm doing)
+        run: |
           echo "${{ secrets.CODEBERG_TOKEN }}" | fj.exe -H codeberg.org auth add-token
 
       - name: Install .NET Framework v4.5.2 SDK
