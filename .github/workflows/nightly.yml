@@ -47,13 +47,7 @@ jobs:
         run: |
           curl -O https://codeberg.org/forgejo-contrib/forgejo-cli/releases/download/v0.6.0/forgejo-cli-x86_64-windows.zip
           unzip forgejo-cli-x86_64-windows.zip
-          mkdir path-stuff
-          mv fj.exe path-stuff
-          echo "$(pwd)\path-stuff" >> "$GITHUB_PATH"
-
-      - name: try to auth the forgejo cli (I have no idea what I'm doing)
-        run: |
-          echo "${{ secrets.CODEBERG_TOKEN }}" | fj -H codeberg.org auth add-token
+          echo "${{ secrets.CODEBERG_TOKEN }}" | ./fj -H codeberg.org auth add-token
 
       - name: Install .NET Framework v4.5.2 SDK
         run: choco install netfx-4.5.2-devpack
@@ -118,8 +112,8 @@ jobs:
           $resultZip = "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
           gh release delete-asset nightly $resultZip --yes
           gh release upload nightly $resultZip --repo ${{ env.githubRepository }}
-          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset delete "${{ env.codebergReleaseName }}" $resultZip
-          fj -H codeberg.org -r ${{ env.codebergRepository }} release asset create "${{ env.codebergReleaseName }}" $resultZip
+          ./fj -H codeberg.org -r ${{ env.codebergRepository }} release asset delete "${{ env.codebergReleaseName }}" $resultZip
+          ./fj -H codeberg.org -r ${{ env.codebergRepository }} release asset create "${{ env.codebergReleaseName }}" $resultZip
 
 
   finish:
