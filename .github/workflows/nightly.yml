@@ -112,8 +112,8 @@ jobs:
           $resultZip = "${{ env.projectName }}.${{ matrix.configuration }}.${{ matrix.platform }}.zip"
           gh release delete-asset nightly $resultZip --yes
           gh release upload nightly $resultZip --repo ${{ env.githubRepository }}
-          ./fj -H codeberg.org -r ${{ env.codebergRepository }} release asset delete "${{ env.codebergReleaseName }}" $resultZip
-          ./fj -H codeberg.org -r ${{ env.codebergRepository }} release asset create "${{ env.codebergReleaseName }}" $resultZip
+          ./fj release asset delete "${{ env.codebergReleaseName }}" $resultZip -H codeberg.org -r ${{ env.codebergRepository }}
+          ./fj release asset create "${{ env.codebergReleaseName }}" $resultZip -H codeberg.org -r ${{ env.codebergRepository }}
 
 
   finish:
